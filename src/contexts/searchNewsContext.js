@@ -1,20 +1,15 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useState } from "react";
 
-export const searchPetsContext = createContext();
+export const searchNewsContext = createContext();
 
-export const useSearchPets = () => {
-	const context = useContext(searchPetsContext);
-	return context;
-};
-
-export function SearchPetsProvider({ children }) {
-	const [searchPet, setSearchPet ] = useState("");
+export function SearchNewsProvider({ children }) {
+	const [searchNew, setSearchNew ] = useState("");
 
 	return (
-		<searchPetsContext.Provider
-			value={{ searchPet, setSearchPet }}
+		<searchNewsContext.Provider
+			value={{ searchNew, setSearchNew }}
 		>
 			{children}
-		</searchPetsContext.Provider>
+		</searchNewsContext.Provider>
 	);
 }

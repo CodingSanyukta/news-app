@@ -1,24 +1,17 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
-import { Card, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import { getPets } from "../../../services/getPets";
-import Loader from "../../../components/Loader";
-import { Pagination } from "@mui/material";
-import { useSearchPets } from "../../../contexts/searchPetsContext";
+import NewCard from "../../components/NewCard/NewCard";
+import { getNews } from "../../services/getNews";
+import { useSearchNews } from "../../hooks/useSearchNews";
+import Loader from "../../components/Loader/Loader";
 
 import { bindActionCreators } from "redux";
 
-// AOS
-import AOS from "aos";
-import "../../../../node_modules/aos/dist/aos";
-import "../../../../node_modules/aos/dist/aos.css";
+/* import SwiperCore, { Navigation } from "swiper"; */
 
-import SwiperCore, { Navigation } from "swiper";
-
-// Import Swiper styles
+/* // Import Swiper styles
 import "swiper/swiper-bundle.min.css";
-import "swiper/components/navigation/navigation.scss";
+import "swiper/components/navigation/navigation.scss"; */
 
 // store
 import {
@@ -37,13 +30,13 @@ import {
 	SidebarColorAction,
 	getSidebarColorMode,
 	getSidebarTypeMode,
-} from "../../../store/setting/setting";
+} from "../../store/setting/setting";
 import { connect } from "react-redux";
 
-import "./PetsList.scss";
+import "./NewsList.scss";
 
-// install Swiper modules
-SwiperCore.use([Navigation]);
+/* // install Swiper modules
+SwiperCore.use([Navigation]); */
 
 const mapStateToProps = (state) => {
 	return {
@@ -72,25 +65,25 @@ const mapDispatchToProps = (dispatch) => ({
 	),
 });
 
-const PetsList = (props) => {
-	const [pets, setPets] = useState([]);
+const NewsList = () => {
+	const [news, setNews] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [data, setData] = useState();
-	const [currentPage, setCurrentPage] = useState(0);
-	const { searchPet } = useSearchPets();
+	const [currentPage, setCurrentPage] = useState(1);
+	const { searchNew } = useSearchNews();
 
-	const handleChangePage = newPage => {
-		setCurrentPage(newPage-1);
+	const handleChangePage = (newPage) => {
+		setCurrentPage(newPage - 1);
 		window.scrollTo(0, 0);
-	}
+	};
 
 	useEffect(() => {
 		async function fetchPets() {
 			try {
-				const pets = await getPets( 8, currentPage, searchPet);
-				setData(pets.data);
-				setPets(pets.data.data);
+				const fetchNews = await getNews(10, currentPage, "bitcoin");
+				setData(fetchNews.data);
+				setNews(fetchNews.data.articles);
 				setLoading(false);
 			} catch (error) {
 				setError(error.message);
@@ -99,9 +92,9 @@ const PetsList = (props) => {
 		}
 
 		fetchPets();
-	}, [currentPage, searchPet]);
+	}, [currentPage, searchNew]);
 
-	useEffect(() => {
+	/* 	useEffect(() => {
 		AOS.init({
 			startEvent: "DOMContentLoaded",
 			disable: function () {
@@ -142,7 +135,7 @@ const PetsList = (props) => {
 				colorcustomizerinfoMode
 			);
 		}
-	});
+	}); */
 
 	if (loading) {
 		return <Loader />;
@@ -154,39 +147,22 @@ const PetsList = (props) => {
 
 	return (
 		<>
-			<Row className="row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 justify-content-center">
-				{pets.map((pet, id) => (
-					<Col key={id}>
-						<Card className="mb-0">
-							<div id="pet" className="d-flex justify-content-center">
-								<Image src={pet.image_url} fluid="true" rounded="true" />
-							</div>
-							<Card.Body>
-								<Card.Title>{pet.name}</Card.Title>
-								<Card.Text>{pet.approximate_location}</Card.Text>
-								<Link
-									to={`pet/${pet._id}`}
-									className="btn btn-light "
-								>
-									Mas detalles
-								</Link>
-							</Card.Body>
-						</Card>
+			<Row className="row-cols-1 g-4 justify-content-center">
+				{news.map((article, id) => (
+					<Col key={id} className="col-lg-10">
+						<NewCard
+							title={article.title}
+							description={article.description}
+							url={article.url}
+							urlToImage={article.urlToImage}
+							publishedAt={article.publishedAt}
+							source={article.source.name}
+						/>
 					</Col>
 				))}
 			</Row>
-			<Pagination
-				count={data.totalPages}
-				className="d-flex justify-content-center m-3"
-				variant="outlined"
-				shape="rounded"
-				color="primary"
-				onChange={e => handleChangePage(e.target.textContent)}
-				page={currentPage + 1}
-			>
-			</Pagination>
 		</>
 	);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(PetsList);
+export default connect(mapStateToProps, mapDispatchToProps)(NewsList);

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: "https://deisy-back.herokuapp.com/api/v1/",
+    baseURL: "https://newsapi.org/v2/",
     timeout: 5000,
 });
 

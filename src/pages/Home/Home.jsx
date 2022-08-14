@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
 import { bindActionCreators } from "redux";
-import { Button } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
+import logo from "../../assets/images/news.png";
+import InputSearch from "../../components/InputSearch/InputSearch";
 
 //prism
 import "../../../node_modules/prismjs/prism";
@@ -25,6 +26,7 @@ import {
 	getSidebarTypeMode,
 } from "../../store/setting/setting";
 import { connect } from "react-redux";
+import NewsList from "../../views/NewsList";
 
 const mapStateToProps = (state) => {
 	return {
@@ -39,6 +41,7 @@ const mapStateToProps = (state) => {
 		navbarstylemode: getNavbarStyleMode(state),
 	};
 };
+
 const mapDispatchToProps = (dispatch) => ({
 	...bindActionCreators(
 		{
@@ -52,6 +55,7 @@ const mapDispatchToProps = (dispatch) => ({
 		dispatch
 	),
 });
+
 const Home = (props) => {
 	//   darkmode
 	const colorMode = sessionStorage.getItem("color-mode");
@@ -100,19 +104,22 @@ const Home = (props) => {
 
 	return (
 		<>
-			<span className="uisheet screen-darken"></span>
-			<div className=" body-class-1 container">
-				<h1 className="text-center">
-					<span className="text-primary">
-						<strong>React</strong>
-					</span>{" "}
-					<span className="text-success">
-						<strong>Bootstrap</strong>
-					</span>{" "}	
-					<span className="text-danger">	
-						<strong>News Page</strong>
-					</span>
-				</h1>
+			<div className="main-img">
+				<div className="container">
+					<Image src={logo} alt="logo" className="img-fluid" width="150" />
+					<h1 className="my-4">
+						<span>News App</span>
+					</h1>
+					<h4 className="text-white">📰Busca noticias de todo el mundo🌍</h4>
+				</div>
+			</div>
+			<div className="container">
+				<div className="m-4 d-flex justify-content-center">
+					<InputSearch />
+				</div>
+				<div className="row mb-5">
+					<NewsList />
+				</div>
 			</div>
 			<div id="back-to-top" style={{ display: "none" }}>
 				<Button size="xs" variant="primary  p-0 position-fixed top" href="#top">

@@ -2,6 +2,7 @@
 import IndexRoutes from "./router/index";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
+import { SearchNewsProvider } from "./contexts/searchNewsContext";
 
 //scss
 import "./assets/scss/hope-ui.scss";
@@ -22,9 +23,11 @@ function App() {
 				position: "relative",
 			}}
 		>
-			<Header />
-			<IndexRoutes />
-			<Footer />
+			<SearchNewsProvider>
+				<Header />
+				<IndexRoutes />
+				<Footer />
+			</SearchNewsProvider>
 		</div>
 	);
 }
