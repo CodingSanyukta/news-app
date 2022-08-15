@@ -4,14 +4,9 @@ import NewCard from "../../components/NewCard/NewCard";
 import { getNews } from "../../services/getNews";
 import { useSearchNews } from "../../hooks/useSearchNews";
 import Loader from "../../components/Loader/Loader";
+import Pagination from "react-bootstrap/Pagination";
 
 import { bindActionCreators } from "redux";
-
-/* import SwiperCore, { Navigation } from "swiper"; */
-
-/* // Import Swiper styles
-import "swiper/swiper-bundle.min.css";
-import "swiper/components/navigation/navigation.scss"; */
 
 // store
 import {
@@ -34,9 +29,6 @@ import {
 import { connect } from "react-redux";
 
 import "./NewsList.scss";
-
-/* // install Swiper modules
-SwiperCore.use([Navigation]); */
 
 const mapStateToProps = (state) => {
 	return {
@@ -66,25 +58,41 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const NewsList = () => {
-	const [news, setNews] = useState([]);
+	const [news, setNews] = useState("");
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [data, setData] = useState();
 	const [currentPage, setCurrentPage] = useState(1);
 	const { searchNew } = useSearchNews();
 
-	const handleChangePage = (newPage) => {
-		setCurrentPage(newPage - 1);
+	const handleNextPage = () => {
+		setCurrentPage(currentPage + 1);
 		window.scrollTo(0, 0);
 	};
+
+	const handlePrevPage = () => {
+		setCurrentPage(currentPage - 1);
+		window.scrollTo(0, 0);
+	}
+
+	const firstPage = () => {
+		setCurrentPage(1);
+		window.scrollTo(0, 0);
+	}
+
+	const lastPage = () => {
+		setCurrentPage((data.totalResults / 10));
+		window.scrollTo(0, 0);
+	}
 
 	useEffect(() => {
 		async function fetchPets() {
 			try {
-				const fetchNews = await getNews(10, currentPage, "bitcoin");
+				const fetchNews = await getNews(10, currentPage, searchNew);
 				setData(fetchNews.data);
 				setNews(fetchNews.data.articles);
 				setLoading(false);
+				setError(null);
 			} catch (error) {
 				setError(error.message);
 				setLoading(false);
@@ -94,60 +102,26 @@ const NewsList = () => {
 		fetchPets();
 	}, [currentPage, searchNew]);
 
-	/* 	useEffect(() => {
-		AOS.init({
-			startEvent: "DOMContentLoaded",
-			disable: function () {
-				var maxWidth = 996;
-				return window.innerWidth < maxWidth;
-			},
-			throttleDelay: 10,
-			once: true,
-			duration: 700,
-			offset: 10,
-		});
-		//   customizer
-		const colorcustomizerMode = sessionStorage.getItem("color-customizer-mode");
-		const colorcustomizerinfoMode = sessionStorage.getItem(
-			"colorcustominfo-mode"
-		);
-		const colorcustomizerprimaryMode = sessionStorage.getItem(
-			"colorcustomprimary-mode"
-		);
-		if (colorcustomizerMode === null) {
-			props.ColorCustomizerAction(
-				props.customizerMode,
-				props.cololrinfomode,
-				props.colorprimarymode
-			);
-			document.documentElement.style.setProperty(
-				"--bs-info",
-				props.cololrinfomode
-			);
-		} else {
-			props.ColorCustomizerAction(
-				colorcustomizerMode,
-				colorcustomizerinfoMode,
-				colorcustomizerprimaryMode
-			);
-			document.documentElement.style.setProperty(
-				"--bs-info",
-				colorcustomizerinfoMode
-			);
-		}
-	}); */
+	if (news === "") {
+		return <div />;
+	} else if (error) {
+		return <div>Error: {error}</div>;
+	}
 
 	if (loading) {
 		return <Loader />;
 	}
 
-	if (error) {
-		return <div>Error: {error}</div>;
-	}
-
 	return (
 		<>
 			<Row className="row-cols-1 g-4 justify-content-center">
+				<Col className="col-lg-10">
+					<p className="card">
+						<span>
+							Está viendo 10 noticias de {data.totalResults} resultados
+						</span>{" "}
+					</p>
+				</Col>
 				{news.map((article, id) => (
 					<Col key={id} className="col-lg-10">
 						<NewCard
@@ -160,6 +134,13 @@ const NewsList = () => {
 						/>
 					</Col>
 				))}
+				<Pagination className="mb-5 justify-content-center">
+					<Pagination.First onClick={firstPage} />
+					<Pagination.Prev onClick={handlePrevPage} />
+					<Pagination.Item active>{Math.round(currentPage)}</Pagination.Item>
+					<Pagination.Next onClick={handleNextPage} />
+					<Pagination.Last onClick={lastPage} />
+				</Pagination>
 			</Row>
 		</>
 	);

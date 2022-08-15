@@ -21,12 +21,13 @@ function App() {
 			style={{
 				background: `url(${topImage})`,
 				position: "relative",
+				minHeight: "100vh",
 			}}
 		>
 			<SearchNewsProvider>
 				<Header />
 				<IndexRoutes />
-				<Footer />
+				<Footer className="position"/>
 			</SearchNewsProvider>
 		</div>
 	);

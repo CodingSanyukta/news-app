@@ -114,10 +114,10 @@ const Home = (props) => {
 				</div>
 			</div>
 			<div className="container">
-				<div className="m-4 d-flex justify-content-center">
+				<div className="mt-4 d-flex flex-column align-items-center justify-content-center ">
 					<InputSearch />
 				</div>
-				<div className="row mb-5">
+				<div>
 					<NewsList />
 				</div>
 			</div>
